@@ -16,4 +16,4 @@ include 'api'
 include 'services:webservice'
 */
 
-//rootProject.name = 'dave'
+rootProject.name = 'osm-connector'
