@@ -14,10 +14,12 @@ public class OsmParsedData {
 
 	private final List<HighwayData> ways;
 	private final List<NodeData> nodes;
+	private List<RestrictionData> restrictions;
 
-	public OsmParsedData(List<HighwayData> ways, List<NodeData> nodes) {
+	public OsmParsedData(List<HighwayData> ways, List<NodeData> nodes, List<RestrictionData> restrictions) {
 		this.ways = ways;
 		this.nodes = nodes;
+		this.restrictions = restrictions;
 	}
 
 	public List<HighwayData> getWays() {
@@ -26,6 +28,10 @@ public class OsmParsedData {
 
 	public List<NodeData> getNodes() {
 		return nodes;
+	}
+
+	public List<RestrictionData> getRestrictions() {
+		return restrictions;
 	}
 
 	public static OsmParsedData fromFile(File file) throws FileNotFoundException {
