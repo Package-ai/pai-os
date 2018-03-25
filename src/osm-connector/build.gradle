@@ -1,0 +1,49 @@
+
+
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+jar.baseName = 'osm-connector'
+version = '2.0'
+
+repositories {
+	jcenter()
+	mavenCentral()
+}
+
+dependencies {
+
+	//osmosis
+	compile group: 'org.openstreetmap.osmosis', name: 'osmosis-pbf', version: '0.46'
+	compile group: 'org.openstreetmap.osmosis', name: 'osmosis-xml', version: '0.46'
+
+	// Google Core Libraries for Java
+	compile 'com.google.guava:guava:20.0'
+
+
+	// slf4j logging
+	compile 'org.slf4j:slf4j-api:1.7.21'
+	
+	// Commons Logging legacy over SLF4J bridge
+	compile 'org.slf4j:jcl-over-slf4j:1.7.21'
+
+	//
+	// Runtime
+	//
+	
+	// Java util logging to slf4j bridge
+	runtime 'org.slf4j:jul-to-slf4j:1.7.21'
+	runtime 'ch.qos.logback:logback-classic:1.1.7'
+	
+	// Declare the dependency for your favourite test framework you want to use in your tests.
+	// TestNG is also supported by the Gradle Test task. Just change the
+	// testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
+	// 'test.useTestNG()' to your build script.
+	testCompile 'junit:junit:4.12'
+	testCompile 'org.junit.platform:junit-platform-runner:1.0.0-M4'
+	testCompile 'org.mockito:mockito-core:2.+'
+}
+
+
