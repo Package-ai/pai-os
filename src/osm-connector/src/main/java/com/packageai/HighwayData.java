@@ -14,12 +14,14 @@ public class HighwayData {
 	private boolean oneWay;
 	private String highwayType;
 	private List<Long> wayNodeIds;
+	private String name;
 
-	public HighwayData(double speedLimit, boolean oneWay, String highwayType, List<Long> wayNodeIds) {
+	public HighwayData(double speedLimit, boolean oneWay, String highwayType, List<Long> wayNodeIds, String name) {
 		this.speedLimit = speedLimit;
 		this.oneWay = oneWay;
 		this.highwayType = highwayType;
 		this.wayNodeIds = wayNodeIds;
+		this.name = name;
 	}
 
 	public double getSpeedLimit() {
@@ -36,6 +38,10 @@ public class HighwayData {
 
 	public List<Long> getWayNodeIds() {
 		return wayNodeIds;
+	}
+
+	public String getName(){
+		return name;
 	}
 
 }

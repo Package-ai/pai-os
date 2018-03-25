@@ -73,7 +73,13 @@ public class OsmDataSink implements Sink {
 				boolean isOneWay = tagValueMap.containsKey("oneway") && (tagValueMap.get("oneway").equalsIgnoreCase("true") || tagValueMap.get("oneway").equalsIgnoreCase("yes"));
 				List<WayNode> wayNodes = way.getWayNodes();
 				List<Long> nodeIds = wayNodes.stream().map(node -> node.getNodeId()).collect(Collectors.toList());
-				HighwayData highwayData = new HighwayData(maxspeed, isOneWay, highwayType, nodeIds);
+				boolean hasName = tagValueMap.containsKey("name");
+				String name = null;
+				if (hasName){
+					name = tagValueMap.get("name");
+				}
+
+				HighwayData highwayData = new HighwayData(maxspeed, isOneWay, highwayType, nodeIds, name);
 				ways.add(highwayData);
 				break;
 			case Node:
@@ -134,6 +140,11 @@ public class OsmDataSink implements Sink {
 		reader.setSink(sink);
 		reader.run();
 		return new OsmParsedData(sink.getWays(), sink.getNodes());
+	}
+
+	public static void main(String[] args) throws FileNotFoundException {
+		OsmParsedData read = read(new File("./src/test/sydney.osm.gz"));
+		List<NodeData> nodes = read.getNodes();
 	}
 
 }
