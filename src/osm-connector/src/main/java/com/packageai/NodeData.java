@@ -8,18 +8,12 @@ package com.packageai;
  */
 public class NodeData {
 
-	private Long nodeId;
 	private double latitude;
 	private double longitude;
 
-	public NodeData(Long nodeId, double latitude, double longitude) {
-		this.nodeId = nodeId;
+	public NodeData(double latitude, double longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
-	}
-
-	public Long getNodeId() {
-		return nodeId;
 	}
 
 	public double getLatitude() {

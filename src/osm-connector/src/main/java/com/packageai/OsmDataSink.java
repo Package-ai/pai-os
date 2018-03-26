@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
  */
 public class OsmDataSink implements Sink {
 
-	private List<HighwayData> ways;
-	private List<NodeData> nodes;
+	private Map<Long, HighwayData> ways;
+	private Map<Long, NodeData> nodes;
 	private List<RestrictionData> restrictions;
 
 	public static final Set<String> WAY_TYPES = Sets.newHashSet("motorway",
@@ -43,8 +43,8 @@ public class OsmDataSink implements Sink {
 			"road");
 
 	OsmDataSink(){
-		this.ways = new ArrayList<>();
-		this.nodes = new ArrayList<>();
+		this.ways = new HashMap<>();
+		this.nodes = new HashMap<>();
 		this.restrictions = new ArrayList<>();
 	}
 
@@ -82,13 +82,13 @@ public class OsmDataSink implements Sink {
 				}
 
 				HighwayData highwayData = new HighwayData(maxspeed, isOneWay, highwayType, nodeIds, name);
-				ways.add(highwayData);
+				ways.put(way.getId(), highwayData);
 				break;
 			case Node:
 				Node node = (Node) entity;
 				long id = node.getId();
-				NodeData nodeData = new NodeData(id, node.getLatitude(), node.getLongitude());
-				nodes.add(nodeData);
+				NodeData nodeData = new NodeData(node.getLatitude(), node.getLongitude());
+				nodes.put(id, nodeData);
 				break;
 			case Relation:
 				Relation relation = (Relation) entity;
@@ -130,11 +130,11 @@ public class OsmDataSink implements Sink {
 		}
 	}
 
-	public List<HighwayData> getWays() {
+	public Map<Long, HighwayData> getWays() {
 		return ways;
 	}
 
-	public List<NodeData> getNodes() {
+	public Map<Long, NodeData> getNodes() {
 		return nodes;
 	}
 
@@ -188,7 +188,10 @@ public class OsmDataSink implements Sink {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		OsmParsedData read = read(new File("./src/test/sydney.osm.gz"));
-		List<NodeData> nodes = read.getNodes();
+		Map<Long, NodeData> nodes = read.getNodes();
+		Map<Long, HighwayData> ways = read.getWays();
+		List<RestrictionData> restrictions = read.getRestrictions();
+		int t = 0;
 	}
 
 }
