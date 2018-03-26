@@ -15,9 +15,9 @@ public class OsmParsedData {
 
 	private final Map<Long, HighwayData> ways;
 	private final Map<Long, NodeData> nodes;
-	private Map<Long, List<RestrictionData>> restrictions;
+	private TripleRelation<Long, Long, List<RestrictionData>> restrictions;
 
-	public OsmParsedData(Map<Long, HighwayData> ways, Map<Long, NodeData> nodes, Map<Long, List<RestrictionData>> restrictions) {
+	public OsmParsedData(Map<Long, HighwayData> ways, Map<Long, NodeData> nodes, TripleRelation<Long, Long, List<RestrictionData>> restrictions) {
 		this.ways = ways;
 		this.nodes = nodes;
 		this.restrictions = restrictions;
@@ -31,7 +31,7 @@ public class OsmParsedData {
 		return nodes;
 	}
 
-	public Map<Long, List<RestrictionData>> getRestrictions() {
+	public TripleRelation<Long, Long, List<RestrictionData>> getRestrictions() {
 		return restrictions;
 	}
 

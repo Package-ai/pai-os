@@ -24,7 +24,7 @@ public class OsmDataSink implements Sink {
 
 	private Map<Long, HighwayData> ways;
 	private Map<Long, NodeData> nodes;
-	private Map<Long, List<RestrictionData>> restrictions;
+	private TripleRelation<Long, Long, List<RestrictionData>> restrictions;
 
 	public static final Set<String> WAY_TYPES = Sets.newHashSet("motorway",
 			"trunk",
@@ -45,7 +45,7 @@ public class OsmDataSink implements Sink {
 	OsmDataSink(){
 		this.ways = new HashMap<>();
 		this.nodes = new HashMap<>();
-		this.restrictions = new HashMap<>();
+		this.restrictions = new TripleRelation<>();
 	}
 
 	@Override
@@ -123,10 +123,10 @@ public class OsmDataSink implements Sink {
 				}
 
 				if (checksum == 3){
-					List<RestrictionData> restrictionData = restrictions.get(from);
+					List<RestrictionData> restrictionData = restrictions.value(via, to);
 					if (restrictionData == null){
 						restrictionData = new ArrayList<>();
-						restrictions.put(from, restrictionData);
+						restrictions.setValue(via, to, restrictionData);
 					}
 					restrictionData.add(new RestrictionData(restrictionType, from, to, via, viaIsWay));
 				}
@@ -141,7 +141,7 @@ public class OsmDataSink implements Sink {
 		return nodes;
 	}
 
-	public Map<Long, List<RestrictionData>> getRestrictions() {
+	public TripleRelation<Long, Long, List<RestrictionData>> getRestrictions() {
 		return restrictions;
 	}
 
@@ -193,7 +193,7 @@ public class OsmDataSink implements Sink {
 		OsmParsedData read = read(new File("./src/test/sydney.osm.gz"));
 		Map<Long, NodeData> nodes = read.getNodes();
 		Map<Long, HighwayData> ways = read.getWays();
-		Map<Long, List<RestrictionData>> restrictions = read.getRestrictions();
+		TripleRelation<Long, Long, List<RestrictionData>> restrictions = read.getRestrictions();
 		int t = 0;
 	}
 
