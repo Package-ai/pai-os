@@ -96,11 +96,9 @@ public class OsmDataSink implements Sink {
 				if (!relationTagValueMap.containsKey("restriction")){
 					break;
 				}
-				String restrictionType = relationTagValueMap.get("restriction");
-				boolean negativeRestriction = false;
-				if (restrictionType.startsWith("no")){
-					negativeRestriction = true;
-				}
+				String restrictionTypeName = relationTagValueMap.get("restriction");
+				RestrictionType restrictionType = RestrictionType.getByOsmName(restrictionTypeName);
+
 				List<RelationMember> members = relation.getMembers();
 				long from = -1;
 				long to = -1;
@@ -125,7 +123,7 @@ public class OsmDataSink implements Sink {
 				}
 
 				if (checksum == 3){
-					restrictions.add(new RestrictionData(negativeRestriction, from, to, via, viaIsWay));
+					restrictions.add(new RestrictionData(restrictionType, from, to, via, viaIsWay));
 				}
 		}
 	}

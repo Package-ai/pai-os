@@ -6,7 +6,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 
 jar.baseName = 'osm-connector'
-version = '3.0'
+version = '4.0'
 
 repositories {
 	jcenter()

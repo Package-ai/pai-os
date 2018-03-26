@@ -8,14 +8,14 @@ package com.packageai;
  */
 public class RestrictionData {
 
-	boolean negativeRestriction;
+	RestrictionType restrictionType;
 	long from;
 	long to;
 	long via;
 	boolean viaIsWay;
 
-	public RestrictionData(boolean negativeRestriction, long from, long to, long via, boolean viaIsWay) {
-		this.negativeRestriction = negativeRestriction;
+	public RestrictionData(RestrictionType restrictionType, long from, long to, long via, boolean viaIsWay) {
+		this.restrictionType = restrictionType;
 		this.from = from;
 		this.to = to;
 		this.via = via;
@@ -23,8 +23,8 @@ public class RestrictionData {
 	}
 
 
-	public boolean isNegativeRestriction() {
-		return negativeRestriction;
+	public RestrictionType getRestrictionType() {
+		return restrictionType;
 	}
 
 	public long getFrom() {
