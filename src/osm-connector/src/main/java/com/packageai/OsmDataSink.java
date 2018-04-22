@@ -66,10 +66,17 @@ public class OsmDataSink implements Sink {
 				}
 				double maxspeed = -1;
 				if (wayTagValueMap.containsKey("maxspeed")) {
-					String maxSpeedString = wayTagValueMap.get("maxspeed").split(" ")[0];
+					String[] split = wayTagValueMap.get("maxspeed").split(" ");
+					String maxSpeedString = split[0];
 					try {
 						maxspeed = Integer.parseInt(maxSpeedString);
 					} catch (Exception e) {
+					}
+					if (split.length > 1){
+						boolean isMph = split[1].equalsIgnoreCase("mph");
+						if (isMph){
+							maxspeed *= 1.609344;
+						}
 					}
 				}
 				boolean isOneWay = wayTagValueMap.containsKey("oneway") && (wayTagValueMap.get("oneway").equalsIgnoreCase("true") || wayTagValueMap.get("oneway").equalsIgnoreCase("yes"));
