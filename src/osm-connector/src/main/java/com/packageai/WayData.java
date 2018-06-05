@@ -8,23 +8,23 @@ import java.util.List;
 /**
  *
  */
-public class HighwayData {
+public class WayData {
 
-	private double speedLimit;
+	private int speedLimit;
 	private boolean oneWay;
 	private String highwayType;
 	private List<Long> wayNodeIds;
 	private String name;
 
-	public HighwayData(double speedLimit, boolean oneWay, String highwayType, List<Long> wayNodeIds, String name) {
-		this.speedLimit = speedLimit;
+	public WayData(double speedLimit, boolean oneWay, String highwayType, List<Long> wayNodeIds, String name) {
+		this.speedLimit = (int)speedLimit;
 		this.oneWay = oneWay;
 		this.highwayType = highwayType;
 		this.wayNodeIds = wayNodeIds;
 		this.name = name;
 	}
 
-	public double getSpeedLimit() {
+	public int getSpeedLimit() {
 		return speedLimit;
 	}
 
@@ -32,7 +32,7 @@ public class HighwayData {
 		return oneWay;
 	}
 
-	public String getHighwayType() {
+	public String getWayType() {
 		return highwayType;
 	}
 
