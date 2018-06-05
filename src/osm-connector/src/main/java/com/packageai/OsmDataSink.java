@@ -79,16 +79,27 @@ public class OsmDataSink implements Sink {
 						}
 					}
 				}
+
 				boolean isOneWay = wayTagValueMap.containsKey("oneway") && (wayTagValueMap.get("oneway").equalsIgnoreCase("true") || wayTagValueMap.get("oneway").equalsIgnoreCase("yes"));
 				List<WayNode> wayNodes = way.getWayNodes();
 				List<Long> nodeIds = wayNodes.stream().map(node -> node.getNodeId()).collect(Collectors.toList());
+
 				boolean hasName = wayTagValueMap.containsKey("name");
 				String name = null;
 				if (hasName){
 					name = wayTagValueMap.get("name");
 				}
 
-				WayData highwayData = new WayData(maxspeed, isOneWay, highwayType, nodeIds, name);
+				boolean hasHgv = wayTagValueMap.containsKey("hgv");
+				boolean hgv = true;
+				if (hasHgv){
+					String hgvString = wayTagValueMap.get(hgv);
+					if (hgvString.equalsIgnoreCase("no") || hgvString.equalsIgnoreCase("false")){
+						hgv =false;
+					}
+				}
+
+				WayData highwayData = new WayData(maxspeed, isOneWay, highwayType, nodeIds, name, hgv);
 				long wayId = way.getId();
 				ways.put(wayId, highwayData);
 				break;
