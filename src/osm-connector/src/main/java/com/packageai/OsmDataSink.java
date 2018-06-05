@@ -93,7 +93,7 @@ public class OsmDataSink implements Sink {
 				boolean hasHgv = wayTagValueMap.containsKey("hgv");
 				boolean hgv = true;
 				if (hasHgv){
-					String hgvString = wayTagValueMap.get(hgv);
+					String hgvString = wayTagValueMap.get("hgv");
 					if (hgvString.equalsIgnoreCase("no") || hgvString.equalsIgnoreCase("false")){
 						hgv =false;
 					}
