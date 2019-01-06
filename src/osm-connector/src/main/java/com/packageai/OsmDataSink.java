@@ -26,21 +26,24 @@ public class OsmDataSink implements Sink {
 	private Map<Long, NodeData> nodes;
 	private List<RestrictionData> restrictions;
 
-	public static final Set<String> WAY_TYPES = Sets.newHashSet("motorway",
-			"trunk",
-			"primary",
-			"secondary",
-			"tertiary",
-			"unclassified",
-			"residential",
-			"service",
-			"motorway_link",
-			"trunk_link",
-			"primary_link",
-			"secondary_link",
-			"tertiary_link",
-			"living_street",
-			"road");
+	public static final Map<String, Short> WAY_TYPES = new HashMap<>();
+	static{
+		WAY_TYPES.put("motorway", (short)0);
+		WAY_TYPES.put("trunk", (short)1);
+		WAY_TYPES.put("primary", (short)2);
+		WAY_TYPES.put("secondary", (short)3);
+		WAY_TYPES.put("tertiary", (short)4);
+		WAY_TYPES.put("unclassified", (short)5);
+		WAY_TYPES.put("residential", (short)6);
+		WAY_TYPES.put("service", (short)7);
+		WAY_TYPES.put("motorway_link", (short)8);
+		WAY_TYPES.put("trunk_link", (short)9);
+		WAY_TYPES.put("primary_link", (short)10);
+		WAY_TYPES.put("secondary_link", (short)11);
+		WAY_TYPES.put("tertiary_link", (short)12);
+		WAY_TYPES.put("living_street", (short)13);
+		WAY_TYPES.put("road", (short)14);
+	}
 
 	OsmDataSink(){
 		this.ways = new HashMap<>();
@@ -61,7 +64,8 @@ public class OsmDataSink implements Sink {
 					break;
 				}
 				String highwayType = wayTagValueMap.get("highway");
-				if (!WAY_TYPES.contains(highwayType)) {
+				Short wayType = WAY_TYPES.get(highwayType);
+				if (wayType == null) {
 					break;
 				}
 				double maxspeed = -1;
@@ -82,7 +86,10 @@ public class OsmDataSink implements Sink {
 
 				boolean isOneWay = wayTagValueMap.containsKey("oneway") && (wayTagValueMap.get("oneway").equalsIgnoreCase("true") || wayTagValueMap.get("oneway").equalsIgnoreCase("yes"));
 				List<WayNode> wayNodes = way.getWayNodes();
-				List<Long> nodeIds = wayNodes.stream().map(node -> node.getNodeId()).collect(Collectors.toList());
+				long[] nodeIds = new long[wayNodes.size()];
+				for (int i = 0; i < wayNodes.size(); i++){
+					nodeIds[i] = wayNodes.get(i).getNodeId();
+				}
 
 				boolean hasName = wayTagValueMap.containsKey("name");
 				String name = null;
@@ -99,7 +106,7 @@ public class OsmDataSink implements Sink {
 					}
 				}
 
-				WayData highwayData = new WayData(maxspeed, isOneWay, highwayType, nodeIds, name, hgv);
+				WayData highwayData = new WayData(maxspeed, isOneWay, wayType, nodeIds, name, hgv);
 				long wayId = way.getId();
 				ways.put(wayId, highwayData);
 				break;

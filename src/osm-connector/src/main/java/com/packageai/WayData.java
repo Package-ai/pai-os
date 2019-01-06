@@ -12,12 +12,12 @@ public class WayData {
 
 	private int speedLimit;
 	private boolean oneWay;
-	private String highwayType;
-	private List<Long> wayNodeIds;
+	private short highwayType;
+	private long[] wayNodeIds;
 	private String name;
 	private boolean hgv;//Heavy Goods Vehicle. true of allowed, false if restricted
 
-	public WayData(double speedLimit, boolean oneWay, String highwayType, List<Long> wayNodeIds, String name, boolean hgv) {
+	public WayData(double speedLimit, boolean oneWay, short highwayType, long[] wayNodeIds, String name, boolean hgv) {
 		this.speedLimit = (int)speedLimit;
 		this.oneWay = oneWay;
 		this.highwayType = highwayType;
@@ -34,11 +34,11 @@ public class WayData {
 		return oneWay;
 	}
 
-	public String getWayType() {
+	public short getWayType() {
 		return highwayType;
 	}
 
-	public List<Long> getWayNodeIds() {
+	public long[] getWayNodeIds() {
 		return wayNodeIds;
 	}
 
