@@ -59,62 +59,52 @@ public class OsmDataSink implements Sink {
 			case Way:
 				Way way = (Way) entity;
 				Map<String, String> wayTagValueMap = new TagCollectionImpl(way.getTags()).buildMap();
-				boolean isHighway = wayTagValueMap.containsKey("highway");
-				if (!isHighway) {
+				if (!wayTagValueMap.containsKey("highway")) {
 					break;
 				}
-				String highwayType = wayTagValueMap.get("highway");
-				Short wayType = WAY_TYPES.get(highwayType);
+				Short wayType = WAY_TYPES.get(wayTagValueMap.get("highway"));
 				if (wayType == null) {
 					break;
 				}
 				double maxspeed = -1;
 				if (wayTagValueMap.containsKey("maxspeed")) {
 					String[] split = wayTagValueMap.get("maxspeed").split(" ");
-					String maxSpeedString = split[0];
 					try {
-						maxspeed = Integer.parseInt(maxSpeedString);
+						maxspeed = Integer.parseInt(split[0]);
 					} catch (Exception e) {
 					}
 					if (split.length > 1){
-						boolean isMph = split[1].equalsIgnoreCase("mph");
-						if (isMph){
+						if (split[1].equalsIgnoreCase("mph")){//is mph, we convert to kmh
 							maxspeed *= 1.609344;
 						}
 					}
 				}
 
 				boolean isOneWay = wayTagValueMap.containsKey("oneway") && (wayTagValueMap.get("oneway").equalsIgnoreCase("true") || wayTagValueMap.get("oneway").equalsIgnoreCase("yes"));
-				List<WayNode> wayNodes = way.getWayNodes();
-				long[] nodeIds = new long[wayNodes.size()];
-				for (int i = 0; i < wayNodes.size(); i++){
-					nodeIds[i] = wayNodes.get(i).getNodeId();
+
+				long[] nodeIds = new long[way.getWayNodes().size()];
+				for (int i = 0; i < way.getWayNodes().size(); i++){
+					nodeIds[i] = way.getWayNodes().get(i).getNodeId();
 				}
 
-				boolean hasName = wayTagValueMap.containsKey("name");
 				String name = null;
-				if (hasName){
+				if (wayTagValueMap.containsKey("name")){
 					name = wayTagValueMap.get("name");
 				}
 
-				boolean hasHgv = wayTagValueMap.containsKey("hgv");
 				boolean hgv = true;
-				if (hasHgv){
-					String hgvString = wayTagValueMap.get("hgv");
-					if (hgvString.equalsIgnoreCase("no") || hgvString.equalsIgnoreCase("false")){
+				if (wayTagValueMap.containsKey("hgv")){
+					if (wayTagValueMap.get("hgv").equalsIgnoreCase("no") || wayTagValueMap.get("hgv").equalsIgnoreCase("false")){
 						hgv =false;
 					}
 				}
 
-				WayData highwayData = new WayData(maxspeed, isOneWay, wayType, nodeIds, name, hgv);
-				long wayId = way.getId();
-				ways.put(wayId, highwayData);
+				ways.put(way.getId(), new WayData(maxspeed, isOneWay, wayType, nodeIds, name, hgv));
 				break;
 			case Node:
 				Node node = (Node) entity;
-				long nodeId = node.getId();
 				NodeData nodeData = new NodeData(node.getLatitude(), node.getLongitude());
-				nodes.put(nodeId, nodeData);
+				nodes.put(node.getId(), nodeData);
 				break;
 			case Relation:
 				Relation relation = (Relation) entity;
@@ -122,9 +112,8 @@ public class OsmDataSink implements Sink {
 				if (!relationTagValueMap.containsKey("restriction")){
 					break;
 				}
-				String restrictionType = relationTagValueMap.get("restriction");
 				boolean negativeRestriction = false;
-				if (restrictionType.startsWith("no")){
+				if (relationTagValueMap.get("restriction").startsWith("no")){
 					negativeRestriction = true;
 				}
 				List<RelationMember> members = relation.getMembers();
@@ -153,6 +142,7 @@ public class OsmDataSink implements Sink {
 				if (checksum == 3){
 					restrictions.add(new RestrictionData(negativeRestriction, from, to, via, viaIsWay));
 				}
+				break;
 		}
 	}
 
