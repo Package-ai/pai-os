@@ -9,6 +9,7 @@ import org.openstreetmap.osmosis.core.domain.v0_6.*;
 import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
 import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
+import org.openstreetmap.osmosis.xml.v0_6.FastXmlReader;
 import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 
 import java.io.File;
@@ -194,7 +195,7 @@ public class OsmDataSink implements Sink {
 			reader = new crosby.binary.osmosis.OsmosisReader(
 					new FileInputStream(file));
 		} else {
-			reader = new XmlReader(file, false, compression);
+			reader = new FastXmlReader(file, false, compression);
 		}
 
 		reader.setSink(sink);
@@ -203,7 +204,10 @@ public class OsmDataSink implements Sink {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
-		OsmParsedData read = read(new File("./src/test/sydney.osm.gz"));
+		System.out.println(System.currentTimeMillis());
+		OsmParsedData read = read(new File("./src/test/sydney.osm"));
+		System.out.println(System.currentTimeMillis());
+
 		Map<Long, NodeData> nodes = read.getNodes();
 	}
 
