@@ -104,7 +104,15 @@ public class OsmDataSink implements Sink {
 				break;
 			case Node:
 				Node node = (Node) entity;
-				NodeData nodeData = new NodeData(node.getLatitude(), node.getLongitude());
+				Map<String, String> nodeTagValueMap = new TagCollectionImpl(node.getTags()).buildMap();
+
+				String crossingValue = nodeTagValueMap.get("crossing");
+				boolean crosswalkTrafficSignal =  (crossingValue != null && crossingValue.equals("traffic_signals"));
+
+				String highwayValue = nodeTagValueMap.get("highway");
+				boolean highwayTrafficSignal =  (highwayValue != null && highwayValue.equals("traffic_signals"));
+
+				NodeData nodeData = new NodeData(node.getLatitude(), node.getLongitude(), highwayTrafficSignal, crosswalkTrafficSignal);
 				nodes.put(node.getId(), nodeData);
 				break;
 			case Relation:
