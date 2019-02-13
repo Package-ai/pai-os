@@ -3,20 +3,17 @@
  */
 package com.packageai;
 
-import com.google.common.collect.Sets;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.*;
 import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
 import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.FastXmlReader;
-import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -44,6 +41,25 @@ public class OsmDataSink implements Sink {
 		WAY_TYPES.put("tertiary_link", (short)12);
 		WAY_TYPES.put("living_street", (short)13);
 		WAY_TYPES.put("road", (short)14);
+	}
+
+	public static final Map<Short, Short> WAY_TYPE_HIERARCHY = new HashMap<>();
+	static{
+		WAY_TYPE_HIERARCHY.put((short)0, (short)0);
+		WAY_TYPE_HIERARCHY.put((short)1, (short)1);
+		WAY_TYPE_HIERARCHY.put((short)2, (short)2);
+		WAY_TYPE_HIERARCHY.put((short)3, (short)3);
+		WAY_TYPE_HIERARCHY.put((short)4, (short)4);
+		WAY_TYPE_HIERARCHY.put((short)5, (short)5);
+		WAY_TYPE_HIERARCHY.put((short)6, (short)5);
+		WAY_TYPE_HIERARCHY.put((short)7, (short)5);
+		WAY_TYPE_HIERARCHY.put((short)8, (short)0);
+		WAY_TYPE_HIERARCHY.put((short)9, (short)1);
+		WAY_TYPE_HIERARCHY.put((short)10, (short)2);
+		WAY_TYPE_HIERARCHY.put((short)11, (short)3);
+		WAY_TYPE_HIERARCHY.put((short)12, (short)4);
+		WAY_TYPE_HIERARCHY.put((short)13, (short)5);
+		WAY_TYPE_HIERARCHY.put((short)14, (short)5);
 	}
 
 	OsmDataSink(){
