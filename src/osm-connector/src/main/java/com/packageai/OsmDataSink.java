@@ -216,7 +216,7 @@ public class OsmDataSink implements Sink {
 		RunnableSource reader;
 
 		if (pbf) {
-			reader = new crosby.binary.osmosis.OsmosisReader(
+			reader = new AyalReader(
 					new FileInputStream(file));
 		} else {
 			reader = new FastXmlReader(file, false, compression);
