@@ -224,7 +224,10 @@ public class OsmDataSink implements Sink {
 
 		reader.setSink(sink);
 		reader.run();
-		return new OsmParsedData(sink.getWays(), sink.getNodes(), sink.getRestrictions());
+		OsmParsedData osmParsedData = new OsmParsedData(sink.getWays(), sink.getNodes(), sink.getRestrictions());
+		sink = null;//for GC
+		reader = null;//for CG
+		return osmParsedData;
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
