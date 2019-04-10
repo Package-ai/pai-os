@@ -3,6 +3,7 @@
  */
 package com.packageai;
 
+import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.*;
 import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
@@ -33,7 +34,7 @@ public class OsmDataSink implements Sink {
 		WAY_TYPES.put("tertiary", (short)4);
 		WAY_TYPES.put("unclassified", (short)5);
 		WAY_TYPES.put("residential", (short)6);
-		WAY_TYPES.put("service", (short)7);
+		//WAY_TYPES.put("service", (short)7);
 		WAY_TYPES.put("motorway_link", (short)8);
 		WAY_TYPES.put("trunk_link", (short)9);
 		WAY_TYPES.put("primary_link", (short)10);
@@ -52,7 +53,7 @@ public class OsmDataSink implements Sink {
 		WAY_TYPE_HIERARCHY.put((short)4, (short)4);
 		WAY_TYPE_HIERARCHY.put((short)5, (short)5);
 		WAY_TYPE_HIERARCHY.put((short)6, (short)5);
-		WAY_TYPE_HIERARCHY.put((short)7, (short)5);
+		//WAY_TYPE_HIERARCHY.put((short)7, (short)5);
 		WAY_TYPE_HIERARCHY.put((short)8, (short)0);
 		WAY_TYPE_HIERARCHY.put((short)9, (short)1);
 		WAY_TYPE_HIERARCHY.put((short)10, (short)2);
@@ -63,8 +64,8 @@ public class OsmDataSink implements Sink {
 	}
 
 	OsmDataSink(){
-		this.ways = new HashMap<>();
-		this.nodes = new HashMap<>();
+		this.ways = new UnifiedMap<>();
+		this.nodes = new UnifiedMap<>();
 		this.restrictions = new ArrayList<>();
 	}
 

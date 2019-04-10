@@ -29,6 +29,10 @@ dependencies {
 	// Commons Logging legacy over SLF4J bridge
 	compile 'org.slf4j:jcl-over-slf4j:1.7.21'
 
+	//gc collections
+	compile 'org.eclipse.collections:eclipse-collections:9.2.0'
+
+
 	//
 	// Runtime
 	//
