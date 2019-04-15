@@ -225,9 +225,10 @@ public class OsmDataSink implements Sink {
 
 		reader.setSink(sink);
 		reader.run();
-		OsmParsedData osmParsedData = new OsmParsedData(sink.getWays(), sink.getNodes(), sink.getRestrictions());
+		OsmParsedData osmParsedData = new OsmParsedData(sink.getWays(), sink.getNodes(), sink.getRestrictions(), file.lastModified());
 		sink = null;//for GC
 		reader = null;//for CG
+		file.lastModified();
 		return osmParsedData;
 	}
 

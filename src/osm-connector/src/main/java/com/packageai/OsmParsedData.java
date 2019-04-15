@@ -15,12 +15,14 @@ public class OsmParsedData {
 
 	private final Map<Long, WayData> ways;
 	private final Map<Long, NodeData> nodes;
-	private List<RestrictionData> restrictions;
+	private final List<RestrictionData> restrictions;
+	private final long lastModified;
 
-	public OsmParsedData(Map<Long, WayData> ways, Map<Long, NodeData> nodes, List<RestrictionData> restrictions) {
+	public OsmParsedData(Map<Long, WayData> ways, Map<Long, NodeData> nodes, List<RestrictionData> restrictions, long lastModified) {
 		this.ways = ways;
 		this.nodes = nodes;
 		this.restrictions = restrictions;
+		this.lastModified = lastModified;
 	}
 
 	public Map<Long, WayData> getWays() {
@@ -33,6 +35,10 @@ public class OsmParsedData {
 
 	public List<RestrictionData> getRestrictions() {
 		return restrictions;
+	}
+
+	public long getLastModified() {
+		return lastModified;
 	}
 
 	public static OsmParsedData fromFile(File file) throws FileNotFoundException {
