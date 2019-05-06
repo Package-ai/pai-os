@@ -249,11 +249,11 @@ public class OsmDataSink implements Sink {
 		return osmParsedData;
 	}
 
-	static OsmParsedData read(File file, File polygonFile, long lastModified) throws IOException {
+	static OsmParsedData read(File file, File polygonFile, long lastModified) throws Exception {
 		return read (new FileInputStream(file), polygonFile != null ? new FileInputStream(polygonFile) : null, lastModified);
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		System.out.println(System.currentTimeMillis());
 		OsmParsedData read = read(new File("./src/test/sydney.osm.pbf"), new File("./src/test/sydney.geojson"), new File("./src/test/sydney.osm.pbf").lastModified());
 		System.out.println(System.currentTimeMillis());

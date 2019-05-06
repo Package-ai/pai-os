@@ -43,11 +43,11 @@ public class OsmParsedData {
 		return lastModified;
 	}
 
-	public static OsmParsedData fromFile(File file) throws IOException {
+	public static OsmParsedData fromFile(File file) throws Exception {
 		return OsmDataSink.read(file, null, file.lastModified());
 	}
 
-	public static OsmParsedData fromFile(File file, File polygonFile) throws IOException {
+	public static OsmParsedData fromFile(File file, File polygonFile) throws Exception {
 		return OsmDataSink.read(file, polygonFile, Math.max(file.lastModified(), polygonFile.lastModified()));
 	}
 
