@@ -5,6 +5,8 @@ package com.packageai;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +43,15 @@ public class OsmParsedData {
 		return lastModified;
 	}
 
-	public static OsmParsedData fromFile(File file) throws FileNotFoundException {
-		return OsmDataSink.read(file);
+	public static OsmParsedData fromFile(File file) throws IOException {
+		return OsmDataSink.read(file, null, file.lastModified());
+	}
+
+	public static OsmParsedData fromFile(File file, File polygonFile) throws IOException {
+		return OsmDataSink.read(file, polygonFile, Math.max(file.lastModified(), polygonFile.lastModified()));
+	}
+
+	public static OsmParsedData fromFile(InputStream file, InputStream polygonFile, long lastModified) throws IOException {
+		return OsmDataSink.read(file, polygonFile, lastModified);
 	}
 }
