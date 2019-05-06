@@ -16,11 +16,15 @@ repositories {
 dependencies {
 
 	//osmosis
-	compile group: 'org.openstreetmap.osmosis', name: 'osmosis-pbf', version: '0.46'
-	compile group: 'org.openstreetmap.osmosis', name: 'osmosis-xml', version: '0.46'
+	compile group: 'org.openstreetmap.osmosis', name: 'osmosis-pbf', version: '0.47'
+	compile group: 'org.openstreetmap.osmosis', name: 'osmosis-xml', version: '0.47'
+	compile 'org.openstreetmap.osmosis:osmosis-areafilter:0.47'
+	compile 'org.openstreetmap.osmosis:osmosis-core:0.47'
 
 	// Google Core Libraries for Java
 	compile 'com.google.guava:guava:20.0'
+
+	compile 'de.grundid.opendatalab:geojson-jackson:1.8.1'
 
 
 	// slf4j logging

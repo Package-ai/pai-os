@@ -48,7 +48,6 @@ public class AyalReader implements RunnableSource {
 			throw new OsmosisRuntimeException("Unable to process PBF stream", e);
 		} finally {
 			sink.close();
-			parser.complete();
 			try{
 				input.close();
 			}catch (IOException e){

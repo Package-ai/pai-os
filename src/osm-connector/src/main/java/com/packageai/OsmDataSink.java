@@ -3,18 +3,30 @@
  */
 package com.packageai;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
+import org.geojson.FeatureCollection;
+import org.geojson.GeoJsonObject;
+import org.geojson.LngLatAlt;
+import org.geojson.Polygon;
+import org.openstreetmap.osmosis.areafilter.AreaFilterPluginLoader;
+import org.openstreetmap.osmosis.areafilter.v0_6.AreaFilter;
+import org.openstreetmap.osmosis.areafilter.v0_6.AreaFilterTaskManagerFactory;
+import org.openstreetmap.osmosis.areafilter.v0_6.PolygonFilter;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.*;
+import org.openstreetmap.osmosis.core.filter.common.IdTrackerType;
 import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
 import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 import org.openstreetmap.osmosis.xml.common.CompressionMethod;
 import org.openstreetmap.osmosis.xml.v0_6.FastXmlReader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.awt.*;
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
+import java.io.*;
 import java.util.*;
+import java.util.List;
 
 /**
  *
@@ -199,42 +211,51 @@ public class OsmDataSink implements Sink {
 
 	}
 
-	static OsmParsedData read(File file) throws FileNotFoundException {
-
+	static OsmParsedData read(InputStream osmFile, InputStream polygonFile, long lastModified) throws IOException {
 		OsmDataSink sink = new OsmDataSink();
 
-		boolean pbf = false;
-		CompressionMethod compression = CompressionMethod.None;
+		RunnableSource reader = new AyalReader(osmFile);
 
-		if (file.getName().endsWith(".pbf")) {
-			pbf = true;
-		} else if (file.getName().endsWith(".gz")) {
-			compression = CompressionMethod.GZip;
-		} else if (file.getName().endsWith(".bz2")) {
-			compression = CompressionMethod.BZip2;
+		if (polygonFile != null){
+
+			GeoJsonObject object = new ObjectMapper().readValue(polygonFile, GeoJsonObject.class);
+			GeoJsonObject geometry = ((FeatureCollection) object).getFeatures().get(0).getGeometry();
+			if (geometry instanceof Polygon) {
+				Polygon polygon = (Polygon) geometry;
+				List<LngLatAlt> exteriorRing = polygon.getExteriorRing();
+
+				Path2D.Double path = new Path2D.Double();
+				path.moveTo(exteriorRing.get(0).getLongitude(), exteriorRing.get(0).getLatitude());
+				for (int i = 1; i < exteriorRing.size(); i++){
+					LngLatAlt lngLatAlt = exteriorRing.get(i);
+					path.lineTo(lngLatAlt.getLongitude(), lngLatAlt.getLatitude());
+				}
+				Area area = new Area(path);
+				AreaFilter areaFilter = new AreaFilterImpl(IdTrackerType.Dynamic, area, true, false, false, false);
+				areaFilter.setSink(sink);
+
+				reader.setSink(areaFilter);
+			}
+			else{
+				reader.setSink(sink);
+			}
+		}
+		else{
+			reader.setSink(sink);
 		}
 
-		RunnableSource reader;
-
-		if (pbf) {
-			reader = new AyalReader(
-					new FileInputStream(file));
-		} else {
-			reader = new FastXmlReader(file, false, compression);
-		}
-
-		reader.setSink(sink);
 		reader.run();
-		OsmParsedData osmParsedData = new OsmParsedData(sink.getWays(), sink.getNodes(), sink.getRestrictions(), file.lastModified());
-		sink = null;//for GC
-		reader = null;//for CG
-		file.lastModified();
+		OsmParsedData osmParsedData = new OsmParsedData(sink.getWays(), sink.getNodes(), sink.getRestrictions(), lastModified);
 		return osmParsedData;
 	}
 
-	public static void main(String[] args) throws FileNotFoundException {
+	static OsmParsedData read(File file, File polygonFile, long lastModified) throws IOException {
+		return read (new FileInputStream(file), polygonFile != null ? new FileInputStream(polygonFile) : null, lastModified);
+	}
+
+	public static void main(String[] args) throws IOException {
 		System.out.println(System.currentTimeMillis());
-		OsmParsedData read = read(new File("./src/test/sydney.osm"));
+		OsmParsedData read = read(new File("./src/test/sydney.osm.pbf"), new File("./src/test/sydney.geojson"), new File("./src/test/sydney.osm.pbf").lastModified());
 		System.out.println(System.currentTimeMillis());
 
 		Map<Long, NodeData> nodes = read.getNodes();
