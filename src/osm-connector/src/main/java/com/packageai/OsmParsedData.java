@@ -51,7 +51,7 @@ public class OsmParsedData {
 		return OsmDataSink.read(file, polygonFile, Math.max(file.lastModified(), polygonFile.lastModified()));
 	}
 
-	public static OsmParsedData fromFile(InputStream file, InputStream polygonFile, long lastModified) throws IOException {
+	public static OsmParsedData fromFile(InputStream file, InputStream polygonFile, long lastModified) throws Exception {
 		return OsmDataSink.read(file, polygonFile, lastModified);
 	}
 }

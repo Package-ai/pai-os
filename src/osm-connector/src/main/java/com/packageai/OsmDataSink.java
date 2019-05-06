@@ -211,7 +211,7 @@ public class OsmDataSink implements Sink {
 
 	}
 
-	static OsmParsedData read(InputStream osmFile, InputStream polygonFile, long lastModified) throws IOException {
+	static OsmParsedData read(InputStream osmFile, InputStream polygonFile, long lastModified) throws Exception {
 		OsmDataSink sink = new OsmDataSink();
 
 		RunnableSource reader = new AyalReader(osmFile);
