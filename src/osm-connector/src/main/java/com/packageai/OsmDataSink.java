@@ -92,6 +92,12 @@ public class OsmDataSink implements Sink {
 				if (!wayTagValueMap.containsKey("highway")) {
 					break;
 				}
+
+				String access = wayTagValueMap.get("access");
+				if (access != null && access.equals("no")){
+					break;
+				}
+
 				Short wayType = WAY_TYPES.get(wayTagValueMap.get("highway"));
 				if (wayType == null) {
 					break;
