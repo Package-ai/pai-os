@@ -9,19 +9,13 @@ import org.geojson.FeatureCollection;
 import org.geojson.GeoJsonObject;
 import org.geojson.LngLatAlt;
 import org.geojson.Polygon;
-import org.openstreetmap.osmosis.areafilter.AreaFilterPluginLoader;
 import org.openstreetmap.osmosis.areafilter.v0_6.AreaFilter;
-import org.openstreetmap.osmosis.areafilter.v0_6.AreaFilterTaskManagerFactory;
-import org.openstreetmap.osmosis.areafilter.v0_6.PolygonFilter;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.*;
 import org.openstreetmap.osmosis.core.filter.common.IdTrackerType;
 import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
 import org.openstreetmap.osmosis.core.task.v0_6.Sink;
-import org.openstreetmap.osmosis.xml.common.CompressionMethod;
-import org.openstreetmap.osmosis.xml.v0_6.FastXmlReader;
 
-import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.io.*;
@@ -36,6 +30,7 @@ public class OsmDataSink implements Sink {
 	private Map<Long, WayData> ways;
 	private Map<Long, NodeData> nodes;
 	private List<RestrictionData> restrictions;
+	public static final short SERVICE_ROAD_TYPE = (short) 7;
 
 	public static final Map<String, Short> WAY_TYPES = new HashMap<>();
 	static{
@@ -46,7 +41,7 @@ public class OsmDataSink implements Sink {
 		WAY_TYPES.put("tertiary", (short)4);
 		WAY_TYPES.put("unclassified", (short)5);
 		WAY_TYPES.put("residential", (short)6);
-		//WAY_TYPES.put("service", (short)7);
+		WAY_TYPES.put("service", SERVICE_ROAD_TYPE);
 		WAY_TYPES.put("motorway_link", (short)8);
 		WAY_TYPES.put("trunk_link", (short)9);
 		WAY_TYPES.put("primary_link", (short)10);
@@ -65,7 +60,7 @@ public class OsmDataSink implements Sink {
 		WAY_TYPE_HIERARCHY.put((short)4, (short)4);
 		WAY_TYPE_HIERARCHY.put((short)5, (short)5);
 		WAY_TYPE_HIERARCHY.put((short)6, (short)5);
-		//WAY_TYPE_HIERARCHY.put((short)7, (short)5);
+		WAY_TYPE_HIERARCHY.put((short)7, (short)5);
 		WAY_TYPE_HIERARCHY.put((short)8, (short)0);
 		WAY_TYPE_HIERARCHY.put((short)9, (short)1);
 		WAY_TYPE_HIERARCHY.put((short)10, (short)2);
@@ -102,6 +97,11 @@ public class OsmDataSink implements Sink {
 				if (wayType == null) {
 					break;
 				}
+
+				if (wayTagValueMap.get("service") != null){
+					break;//tagged service roads are not used in the system.
+				}
+
 				double maxspeed = -1;
 				if (wayTagValueMap.containsKey("maxspeed")) {
 					String[] split = wayTagValueMap.get("maxspeed").split(" ");
