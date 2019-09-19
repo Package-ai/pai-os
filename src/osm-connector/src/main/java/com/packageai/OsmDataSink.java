@@ -98,7 +98,7 @@ public class OsmDataSink implements Sink {
 					break;
 				}
 
-				if (wayTagValueMap.get("service") != null){
+				if (wayType == SERVICE_ROAD_TYPE && wayTagValueMap.get("service") != null){
 					break;//tagged service roads are not used in the system.
 				}
 
