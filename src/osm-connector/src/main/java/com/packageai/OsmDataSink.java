@@ -5,10 +5,7 @@ package com.packageai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
-import org.geojson.FeatureCollection;
-import org.geojson.GeoJsonObject;
-import org.geojson.LngLatAlt;
-import org.geojson.Polygon;
+import org.geojson.*;
 import org.openstreetmap.osmosis.areafilter.v0_6.AreaFilter;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.domain.v0_6.*;
@@ -225,26 +222,48 @@ public class OsmDataSink implements Sink {
 		if (polygonFile != null){
 
 			GeoJsonObject object = new ObjectMapper().readValue(polygonFile, GeoJsonObject.class);
-			GeoJsonObject geometry = ((FeatureCollection) object).getFeatures().get(0).getGeometry();
+			List<Feature> featureList = ((FeatureCollection) object).getFeatures();
+			if (featureList.size() != 1){
+				throw new GeoFilterException("Cannot handle geojson file with more than one feature");
+			}
+
+			GeoJsonObject geometry = featureList.get(0).getGeometry();
+
+			if (!(geometry instanceof Polygon) && !(geometry instanceof LineString)){
+				throw new GeoFilterException("Cannot handle geojson file with feature that is not polygon or linestring");
+			}
+
+			List<LngLatAlt> coordinates;
 			if (geometry instanceof Polygon) {
 				Polygon polygon = (Polygon) geometry;
-				List<LngLatAlt> exteriorRing = polygon.getExteriorRing();
-
-				Path2D.Double path = new Path2D.Double();
-				path.moveTo(exteriorRing.get(0).getLongitude(), exteriorRing.get(0).getLatitude());
-				for (int i = 1; i < exteriorRing.size(); i++){
-					LngLatAlt lngLatAlt = exteriorRing.get(i);
-					path.lineTo(lngLatAlt.getLongitude(), lngLatAlt.getLatitude());
+				coordinates = new ArrayList<>(polygon.getExteriorRing());
+				if (coordinates.size() < 4){//first and last point is the same point so actually 4 points is a triangle
+					throw new GeoFilterException("Cannot handle geojson file with invalid polygon ");
 				}
-				Area area = new Area(path);
-				AreaFilter areaFilter = new AreaFilterImpl(IdTrackerType.Dynamic, area, true, false, false, false);
-				areaFilter.setSink(sink);
 
-				reader.setSink(areaFilter);
 			}
-			else{
-				reader.setSink(sink);
+			else {
+				//must be linestring because we validated earlier
+				LineString lineString = (LineString) geometry;
+				coordinates = new ArrayList<>(lineString.getCoordinates());
+				if (coordinates.size() < 3){//it's just a line, and we need at least a triangle
+					throw new GeoFilterException("Cannot handle geojson file with invalid lineString ");
+				}
+				coordinates.add(coordinates.get(0));
 			}
+
+			Path2D.Double path = new Path2D.Double();
+			path.moveTo(coordinates.get(0).getLongitude(), coordinates.get(0).getLatitude());
+			for (int i = 1; i < coordinates.size(); i++){
+				LngLatAlt lngLatAlt = coordinates.get(i);
+				path.lineTo(lngLatAlt.getLongitude(), lngLatAlt.getLatitude());
+			}
+			Area area = new Area(path);
+			AreaFilter areaFilter = new AreaFilterImpl(IdTrackerType.Dynamic, area, true, false, false, false);
+			areaFilter.setSink(sink);
+
+			reader.setSink(areaFilter);
+
 		}
 		else{
 			reader.setSink(sink);
